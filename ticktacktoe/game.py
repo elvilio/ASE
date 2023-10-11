@@ -27,6 +27,7 @@ class Game:
         self.board_size = board_size
         self.current_player = next(self._players)
         self.winner_combo = []
+        self.non_valid_cells = []
         self._current_moves = []
         self._has_winner = False
         self._winning_combos = []
@@ -112,6 +113,7 @@ class Game:
                     self._winners_board[offset[0]][offset[1]] = Move(row, col, move.label)
                     for w in wc:
                         self.winner_combo.append(w)
+                    self._update_non_valid_cells(offset)
         # second check victory in big board
         for wc in self._winning_combos:
             if offset in wc:
@@ -121,6 +123,7 @@ class Game:
                         flag = True
                 if not flag:
                     self._has_winner = True
+                    self._update_non_valid_cells(offset)
         # third check if tied
         flag = True
         for r in [e + offset[0] * self.board_size for e in range(self.board_size)]:
@@ -129,6 +132,7 @@ class Game:
                     flag = False
         if flag:
             self._tied_board[offset[0]][offset[1]] = Move(offset[0], offset[1], "tied")
+            self._update_non_valid_cells(offset)
 
     def has_winner(self):
         """Return True if the game has a winner, and False otherwise."""
@@ -165,3 +169,9 @@ class Game:
                 row_content[col] = Move(row, col)
         self._has_winner = False
         self.winner_combo = []
+        self.non_valid_cells = []
+
+    def _update_non_valid_cells(self, offset):
+        for r in [e + offset[0] * self.board_size for e in range(self.board_size)]:
+            for c in [e + offset[1] * self.board_size for e in range(self.board_size)]:
+                self.non_valid_cells.append((r, c))

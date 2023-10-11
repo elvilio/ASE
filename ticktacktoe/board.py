@@ -74,6 +74,7 @@ class Board(tk.Tk):
         if self._game.is_valid_move(move):
             self._update_button(clicked_btn)
             self._game.process_move(move)
+            self._dim_cells()
             self._highlight_cells()
             if self._game.is_tied():
                 self._update_display(msg="Tied game!", color="red")
@@ -98,6 +99,11 @@ class Board(tk.Tk):
         for button, coordinates in self._cells.items():
             if coordinates in self._game.winner_combo:
                 button.config(highlightbackground="red")
+
+    def _dim_cells(self):
+        for button, coordinates in self._cells.items():
+            if coordinates in self._game.non_valid_cells:
+                button.config(highlightbackground="gray")
 
     def reset_board(self):
         """Reset the game's board to play again."""
