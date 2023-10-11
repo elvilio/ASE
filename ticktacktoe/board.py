@@ -36,22 +36,35 @@ class Board(tk.Tk):
     def _create_board_grid(self):
         grid_frame = tk.Frame(master=self)
         grid_frame.pack()
-        for row in range(self._game.board_size):
-            self.rowconfigure(row, weight=1, minsize=50)
-            self.columnconfigure(row, weight=1, minsize=75)
-            for col in range(self._game.board_size):
+        for row in range(self._game.board_size * self._game.board_size):
+            self.rowconfigure(row, weight=1, minsize=30)
+            self.columnconfigure(row, weight=1, minsize=30)
+            for col in range(self._game.board_size * self._game.board_size):
                 button = tk.Button(
                     master=grid_frame,
                     text="",
                     font=font.Font(size=36, weight="bold"),
                     fg="black",
-                    width=3,
-                    height=2,
+                    width=1,
+                    height=1,
                     highlightbackground="lightblue",
                 )
                 self._cells[button] = (row, col)
                 button.bind("<ButtonPress-1>", self.play)
-                button.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+                if col % self._game.board_size == 0:
+                    button.grid(row=row, column=col, padx=(20, 5), sticky="nsew")
+                elif col % self._game.board_size == self._game.board_size - 1:
+                    button.grid(row=row, column=col, padx=(5, 20), sticky="nsew")
+                else:
+                    button.grid(row=row, column=col, padx=(5, 5), sticky="nsew")
+
+                if row % self._game.board_size == 0:
+                    button.grid(pady=(20, 5))
+                elif row % self._game.board_size == self._game.board_size - 1:
+                    button.grid(pady=(5, 20))
+                else:
+                    button.grid(pady=(5, 5))
+
 
     def play(self, event):
         """Handle a player's move."""
@@ -61,10 +74,10 @@ class Board(tk.Tk):
         if self._game.is_valid_move(move):
             self._update_button(clicked_btn)
             self._game.process_move(move)
+            self._highlight_cells()
             if self._game.is_tied():
                 self._update_display(msg="Tied game!", color="red")
             elif self._game.has_winner():
-                self._highlight_cells()
                 msg = f'Player "{self._game.current_player.label}" won!'
                 color = self._game.current_player.color
                 self._update_display(msg, color)
