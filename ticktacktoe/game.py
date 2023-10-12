@@ -79,7 +79,7 @@ class Game:
                         flag = True
                 if not flag:
                     self._has_winner = True
-                    self.winner_combo = w
+                    self.winner_combo = wc
 
     def has_winner(self):
         """Return True if the game has a winner, and False otherwise."""
