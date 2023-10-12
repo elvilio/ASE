@@ -28,6 +28,8 @@ class Game:
         self.current_player = next(self._players)
         self.winner_combo = []
         self.non_valid_cells = []
+        self.valid_cells = []
+        self.reset_cells = []
         self._current_moves = []
         self._has_winner = False
         self._winning_combos = []
@@ -90,6 +92,7 @@ class Game:
 
         return no_winner and move_not_played and right_big_cell
 
+
     def process_move(self, move):
         """Process the current move and check if it's a win."""
         row, col = move.row, move.col
@@ -133,6 +136,24 @@ class Game:
         if flag:
             self._tied_board[offset[0]][offset[1]] = Move(offset[0], offset[1], "tied")
             self._update_non_valid_cells(offset)
+
+        self.reset_cells = self.valid_cells
+        self.valid_cells = []
+
+        if self._winners_board[self._last_move_position[0]][self._last_move_position[1]].label != "":
+            for wb in self._winners_board:
+                for celll in wb:
+                    if celll.label == "":
+                        for r in [e + celll.row * self.board_size for e in range(self.board_size)]:
+                            for c in [e + celll.col * self.board_size for e in range(self.board_size)]:
+                                if self._current_moves[r][c].label == "":
+                                    self.valid_cells.append((r, c))
+        else:
+            for r in [e + self._last_move_position[0] * self.board_size for e in range(self.board_size)]:
+                for c in [e + self._last_move_position[1] * self.board_size for e in range(self.board_size)]:
+                    if self._current_moves[r][c].label == "":
+                        self.valid_cells.append((r, c))
+
 
     def has_winner(self):
         """Return True if the game has a winner, and False otherwise."""
