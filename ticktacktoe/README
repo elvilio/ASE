@@ -1,0 +1,10 @@
+# Tick-Tac-Toe project
+Tick-Tac-Toe project for the course Advanced Software Engineering 2023/2024
+
+Libraries needed:
+[tkinter](https://docs.python.org/3/library/tkinter.html)
+
+To run:
+```
+   python3 game.py
+```
